@@ -1,9 +1,9 @@
 "use client";
+import axios from "axios";
 import React, { useState } from "react";
 import Filter from "./Filter";
 import TaskCard from "./TaskCard";
 import Cookies from "js-cookie";
-import axios from "axios";
 
 export default function TaskBoard({ tasks, setTasks }) {
   const [filters, setFilters] = useState({
@@ -16,6 +16,7 @@ export default function TaskBoard({ tasks, setTasks }) {
     "In Progress": false,
     Done: false,
   });
+
   const groupedTasks = tasks.reduce(
     (acc, task) => {
       if (acc[task.status]) {
@@ -51,41 +52,58 @@ export default function TaskBoard({ tasks, setTasks }) {
     }));
   };
 
-  const handleEdit = (id) => {
-    console.log(id);
+  const handleDragStart = (e, task) => {
+    e.dataTransfer.setData("taskId", task._id);
   };
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this task?");
-    if (!confirmDelete) return;
 
+  const handleDrop = async (e, newStatus) => {
+    e.preventDefault();
+    const taskId = e.dataTransfer.getData("taskId");
+    const updatedTasks = tasks.map((task) => {
+      if (task._id === taskId) {
+        return { ...task, status: newStatus };
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
+  
     try {
-      const token = Cookies.get("token"); 
-      const response = await axios.delete(`/api/tasks/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const token = Cookies.get("token");
+      const response = await axios.put(
+        `/api/tasks/${taskId}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
       if (response.status === 200) {
-        setTasks((prevTasks) => prevTasks.filter((task) => task._id !== id));
-        alert("Task deleted successfully.");
+        console.log("Task status updated in the database");
       } else {
-        throw new Error("Failed to delete task.");
+        console.error("Failed to update task in the database");
       }
     } catch (error) {
-      console.error("Error deleting task:", error);
-      alert("An error occurred while deleting the task.");
+      console.error("Error updating task status:", error);
+      alert("An error occurred while updating the task status.");
     }
   };
+  
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {Object.entries(groupedTasks).map(([status, tasks]) => (
         <div
           key={status}
           className="p-4 border rounded shadow-sm flex flex-col"
+          onDrop={(e) => handleDrop(e, status)}
+          onDragOver={handleDragOver}
         >
           <div
             className={`relative flex items-center justify-between p-2 text-lg font-semibold ${getStatusClass(
@@ -115,8 +133,8 @@ export default function TaskBoard({ tasks, setTasks }) {
               <TaskCard
                 key={task._id}
                 task={task}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
+                setTasks={setTasks}
+                onDragStart={(e) => handleDragStart(e, task)}
               />
             ))}
           </ul>

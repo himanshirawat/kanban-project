@@ -1,6 +1,44 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
+import Modal from "./Modal";
 
-const TaskCard = ({ task, onEdit, onDelete }) => {
+const TaskCard = ({ task, setTasks, onDragStart }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [modalTask, setModalTask] = useState(null);
+
+  const handleEdit = (task) => {
+    setModalTask(task);
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this task?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const token = Cookies.get("token");
+      const response = await axios.delete(`/api/tasks/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        setTasks((prevTasks) => prevTasks.filter((task) => task._id !== id));
+        alert("Task deleted successfully.");
+      } else {
+        throw new Error("Failed to delete task.");
+      }
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      alert("An error occurred while deleting the task.");
+    }
+  };
+
   const getPriorityClass = (priority) => {
     switch (priority) {
       case "High":
@@ -15,9 +53,12 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
   };
 
   return (
-    <li
-      key={task._id}
-      className={`p-4 border rounded-lg shadow-md ${getPriorityClass(task.priority)} transition-transform transform hover:scale-105`}
+    <div
+      draggable
+      onDragStart={(e) => onDragStart(e, task)}
+      className={`p-4 border rounded-lg shadow-md ${getPriorityClass(
+        task.priority
+      )} transition-transform transform hover:scale-105`}
     >
       <h3 className="font-semibold text-blue-700">{task.title}</h3>
       <p className="text-gray-700 mt-2">{task.description}</p>
@@ -25,19 +66,30 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
 
       <div className="mt-4 flex justify-between space-x-4">
         <button
-          onClick={() => onEdit(task)} 
+          onClick={() => handleEdit(task)}
           className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Edit
         </button>
         <button
-          onClick={() => onDelete(task._id)} 
+          onClick={() => handleDelete(task._id)}
           className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
         >
           Delete
         </button>
       </div>
-    </li>
+
+      {showModal && (
+        <Modal
+          onClose={() => {
+            setShowModal(false);
+            setModalTask(null);
+          }}
+          setTasks={setTasks}
+          taskToEdit={modalTask}
+        />
+      )}
+    </div>
   );
 };
 

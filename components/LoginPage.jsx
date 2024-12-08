@@ -29,8 +29,6 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post("/api/users/login", userData);
-      console.log(response);
-
       if (response.status === 200) {
         const { token } = response.data;
         Cookies.set("token", token);
