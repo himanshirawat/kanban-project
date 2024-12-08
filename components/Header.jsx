@@ -1,15 +1,17 @@
-'use client';
-import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
+"use client";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = Cookies.get('token');
+    const token = Cookies.get("token");
     if (token) {
       setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
     }
   }, []);
 
