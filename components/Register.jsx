@@ -148,6 +148,7 @@ export default function Register() {
               className="w-full px-4 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               required
             />
+            <p>*OTP has been sent to your email</p>
           </div>
         )}
 
