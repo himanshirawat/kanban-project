@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
 
 export default function NavPanel({ userId, tasks, setTasks }) {
-  const [currentTime, setCurrentTime] = useState(null); // Start with null
+  const [currentTime, setCurrentTime] = useState(null); 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -10,7 +10,7 @@ export default function NavPanel({ userId, tasks, setTasks }) {
     return () => clearInterval(interval);
   }, []);
 
-  if (currentTime === null) return null; // Don't render until currentTime is set
+  if (currentTime === null) return null; 
 
   const formattedDate = currentTime.toLocaleDateString();
   const formattedTime = currentTime.toLocaleTimeString();
