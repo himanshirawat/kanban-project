@@ -1,5 +1,7 @@
+'use client';
 import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
+import { IoMdTime } from "react-icons/io";
 
 export default function NavPanel({ userId, tasks, setTasks }) {
   const [currentTime, setCurrentTime] = useState(null); 
@@ -20,11 +22,14 @@ export default function NavPanel({ userId, tasks, setTasks }) {
 
   return (
     <div className="flex justify-between items-center p-4 bg-gray-100 shadow">
+      <div className="flex gap-2 items-center">
+      <IoMdTime size={22}/>
       <div>
         <div className="text-lg font-semibold">{formattedDay}</div>
         <div className="text-sm text-gray-600">
           {formattedDate} | {formattedTime}
         </div>
+      </div>
       </div>
 
       <button

@@ -19,6 +19,9 @@ export default function Modal({
     status: taskToEdit?.status || "To Do",
     order: taskToEdit?.order || tasks.length + 1,
     userId: taskToEdit?.userId || userId,
+    dueDate: taskToEdit?.dueDate
+      ? new Date(taskToEdit.dueDate).toISOString().substring(0, 10)
+      : "", 
   });
 
   const handleInputChange = (e) => {
@@ -31,6 +34,11 @@ export default function Modal({
     const token = Cookies.get("token");
 
     try {
+      if (formData.dueDate && new Date(formData.dueDate) < new Date()) {
+        alert("Due date must be in the future.");
+        return;
+      }
+      console.log(formData.dueDate)
       if (isEditMode) {
         const response = await axios.put(
           `/api/tasks/${taskToEdit._id}`,
@@ -65,7 +73,7 @@ export default function Modal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-20 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-xl font-semibold mb-4">
           {isEditMode ? "Edit Task" : "Add Task"}
@@ -126,6 +134,18 @@ export default function Modal({
               <option value="In Progress">In Progress</option>
               <option value="Done">Done</option>
             </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Due Date
+            </label>
+            <input
+              type="date"
+              name="dueDate"
+              value={formData.dueDate}
+              onChange={handleInputChange}
+              className="mt-1 p-2 border border-gray-300 rounded w-full"
+            />
           </div>
           <div className="flex justify-end">
             <button

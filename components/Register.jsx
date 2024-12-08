@@ -73,7 +73,7 @@ export default function Register() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-md">
+    <div className="max-w-md mx-auto bg-white p-8 mt-[10%] rounded-xl shadow-md ">
       <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
       <form
         onSubmit={isOtpSent ? handleOtpSubmit : handleRegister}

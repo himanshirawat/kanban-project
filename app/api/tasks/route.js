@@ -17,26 +17,20 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    await authenticate(req); // Authenticate the user
-    await connectToDatabase(); // Connect to MongoDB
-
+    await authenticate(req); 
+    await connectToDatabase();
     const body = await req.json();
-    const { title, priority, status, userId, description = "", order = 0 } = body;
-
-    // Validate the required fields
-    if (!title || !priority || !status || !userId) {
+    const { title, priority, status, dueDate, userId, description = "", order = 0 } = body;
+    console.log(dueDate);
+    if (!title || !priority || !status || !userId  || !dueDate) {
       return new Response("Missing required fields", { status: 400 });
     }
-
-    // Find the user by ID
     const user = await User.findById(userId);
     if (!user) {
       return new Response("User not found", { status: 404 });
     }
 
     console.log("User before task update:", user);
-
-    // Create the new task
     const newTask = new Task({
       title,
       description,
@@ -44,19 +38,14 @@ export async function POST(req) {
       status,
       order,
       userId,
+      dueDate
     });
-
-    // Save the new task
     await newTask.save();
+    console.log(newTask);
     console.log("New Task ID:", newTask._id);
-
-    // Update the user's tasks array
-    user.tasks.push(newTask._id); // Push the new task ID to the array
-    await user.save(); // Save the updated user
-
+    user.tasks.push(newTask._id); 
+    await user.save(); 
     console.log("Updated User after adding task:", user);
-
-    // Return the new task as a response
     return new Response(JSON.stringify(newTask), {
       status: 201,
       headers: { "Content-Type": "application/json" },

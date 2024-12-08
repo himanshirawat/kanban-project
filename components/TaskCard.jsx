@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import Modal from "./Modal";
+import { CiEdit } from "react-icons/ci";
+import { MdOutlineDateRange, MdOutlineDelete } from "react-icons/md";
 
 const TaskCard = ({ task, setTasks, onDragStart }) => {
   const [showModal, setShowModal] = useState(false);
@@ -42,43 +44,49 @@ const TaskCard = ({ task, setTasks, onDragStart }) => {
   const getPriorityClass = (priority) => {
     switch (priority) {
       case "High":
-        return "bg-red-300";
+        return "border-4 border-red-300";
       case "Medium":
-        return "bg-yellow-300";
+        return "border-4 border-yellow-300";
       case "Low":
-        return "bg-green-300";
+        return "border-4 border-green-300";
       default:
-        return "bg-gray-300";
+        return "border-4 border-gray-300";
     }
   };
-
+  console.log(task);
   return (
-    <div
-      draggable
-      onDragStart={(e) => onDragStart(e, task)}
-      className={`p-4 border rounded-lg shadow-md ${getPriorityClass(
-        task.priority
-      )} transition-transform transform hover:scale-105`}
-    >
-      <h3 className="font-semibold text-blue-700">{task.title}</h3>
-      <p className="text-gray-700 mt-2">{task.description}</p>
-      <p className="text-sm text-gray-500 mt-1">Priority: {task.priority}</p>
+    <>
+      <div
+        draggable
+        onDragStart={(e) => onDragStart(e, task)}
+        className={`p-4 border rounded-lg  bg-white shadow-xl ${getPriorityClass(
+          task.priority
+        )} transition-transform transform hover:scale-105`}
+      >
+        <div className="flex justify-between">
+          <h3 className="font-semibold text-blue-700">{task.title}</h3>
+          <div className="font-semibold text-blue-700 flex items-center">
+            {" "}
+            <MdOutlineDateRange size={22} />
+            {task.dueDate
+              ? new Date(task.dueDate).toLocaleDateString()
+              : "No due date"}
+          </div>
+        </div>
+        <p className="text-gray-700 mt-2">{task.description}</p>
 
-      <div className="mt-4 flex justify-between space-x-4">
-        <button
-          onClick={() => handleEdit(task)}
-          className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Edit
-        </button>
-        <button
-          onClick={() => handleDelete(task._id)}
-          className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          Delete
-        </button>
+        <div className="mt-4 flex justify-between items-center">
+          <p className="text-sm text-gray-500 ">Priority: {task.priority}</p>
+          <div className=" text-right space-x-4">
+            <button onClick={() => handleEdit(task)}>
+              <CiEdit size={22} />
+            </button>
+            <button onClick={() => handleDelete(task._id)}>
+              <MdOutlineDelete size={22} />
+            </button>
+          </div>
+        </div>
       </div>
-
       {showModal && (
         <Modal
           onClose={() => {
@@ -89,7 +97,7 @@ const TaskCard = ({ task, setTasks, onDragStart }) => {
           taskToEdit={modalTask}
         />
       )}
-    </div>
+    </>
   );
 };
 

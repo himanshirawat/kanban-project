@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Filter from "./Filter";
 import TaskCard from "./TaskCard";
 import Cookies from "js-cookie";
+import { IoFilterOutline } from "react-icons/io5";
 
 export default function TaskBoard({ tasks, setTasks }) {
   const [filters, setFilters] = useState({
@@ -101,21 +102,21 @@ export default function TaskBoard({ tasks, setTasks }) {
       {Object.entries(groupedTasks).map(([status, tasks]) => (
         <div
           key={status}
-          className="p-4 border rounded shadow-sm flex flex-col"
+          className={`p-4 border rounded shadow-sm flex flex-col ${getStatusClass(
+            status
+          )}`}
           onDrop={(e) => handleDrop(e, status)}
           onDragOver={handleDragOver}
         >
           <div
-            className={`relative flex items-center justify-between p-2 text-lg font-semibold ${getStatusClass(
-              status
-            )}`}
+            className={`relative flex items-center justify-between p-2 text-lg font-semibold`}
           >
             <span>{status}</span>
             <button
               onClick={() => toggleDropdown(status)}
-              className="px-3 py-1 text-sm bg-gray-200 rounded"
+              className="px-3 py-1 text-sm rounded flex items-center gap-2"
             >
-              {filters[status]} ▼
+              {filters[status]} <IoFilterOutline />
             </button>
             {isDropdownVisible[status] && (
               <Filter
