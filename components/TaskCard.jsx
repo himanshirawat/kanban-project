@@ -66,10 +66,26 @@ const TaskCard = ({ task, setTasks, onDragStart }) => {
         <div className="flex justify-between">
           <h3 className="font-semibold text-blue-700">{task.title}</h3>
           <div className="font-semibold text-blue-700 flex items-center">
-            {" "}
-            <MdOutlineDateRange size={22} />
-            {task.dueDate
-              ? new Date(task.dueDate).toLocaleDateString()
+            <MdOutlineDateRange size={22} className="mr-1" />
+            {task?.dueDate
+              ? (() => {
+                  const dueDate = new Date(task.dueDate);
+                  const today = new Date();
+                  const timeDifference = dueDate - today;
+                  const daysLeft = Math.ceil(
+                    timeDifference / (1000 * 60 * 60 * 24)
+                  );
+
+                  if (daysLeft > 0) {
+                    return `${dueDate.toLocaleDateString()} (${daysLeft} days left)`;
+                  } else if (daysLeft === 0) {
+                    return `${dueDate.toLocaleDateString()} (Due today)`;
+                  } else {
+                    return `${dueDate.toLocaleDateString()} (Overdue by ${Math.abs(
+                      daysLeft
+                    )} days)`;
+                  }
+                })()
               : "No due date"}
           </div>
         </div>

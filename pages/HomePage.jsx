@@ -14,7 +14,7 @@ export default function Home() {
           </div>
         </section>
   
-        <section className='py-12 bg-white'>
+        <section className='py-12 bg-white px-12'>
           <div className='container mx-auto px-4'>
             <h3 className='text-3xl font-bold text-gray-800 mb-6 text-center'>
               About the Project
@@ -62,8 +62,7 @@ export default function Home() {
           <p className='text-gray-700'>
             Hi, I&apos;m <strong>Himanshika Rawat</strong>, a passionate Full-Stack
             Developer with a knack for creating scalable and efficient web
-            applications. I love solving complex problems and bringing ideas to
-            life through code.
+            applications.
           </p>
           <div className='mt-4'>
             <a
